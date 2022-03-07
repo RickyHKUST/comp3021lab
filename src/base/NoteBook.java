@@ -19,6 +19,12 @@ public class NoteBook {
 		return insertNote(folderName,n);
 	}
 	
+	//Overloading method createTextNote
+	public boolean createTextNote(String folderName,String title, String content) {
+		TextNote n = new TextNote(title,content);
+		return insertNote(folderName,n);
+	}
+	
 	public ArrayList<Folder> getFolders() {
 		return folders;
 	}
@@ -42,6 +48,21 @@ public class NoteBook {
 		
 		f.addNote(note);
 		return true;
+	}
+	
+	public void sortFolders() {
+		for(Folder f:folders) {
+			f.sortNotes();
+		}
+		folders.sort(null);
+	}
+	
+	public ArrayList<Note> searchNotes(String keywords){
+		ArrayList<Note> list = new ArrayList<Note>();
+		for(Folder f:folders) {
+			list.addAll(f.searchNotes(keywords));
+		}
+		return list;
 	}
 
 }

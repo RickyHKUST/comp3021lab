@@ -2,7 +2,7 @@ package base;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Folder {
+public class Folder implements Comparable<Folder> {
 	
 	private ArrayList<Note> notes;
 	private String name;
@@ -48,6 +48,22 @@ public class Folder {
 		Folder other = (Folder) obj;
 		return Objects.equals(name, other.name);
 	}
+
+	@Override
+	public int compareTo(Folder o) {
+		return this.name.compareTo(o.name);
+	}
 	
+	public void sortNotes() {
+		notes.sort(null);
+	}
 	
+	public ArrayList<Note> searchNotes(String keywords){
+		ArrayList<Note> list = new ArrayList<Note>();
+		for(Note n:notes) {
+			if(n.hasKeywords(keywords))
+			list.add(n);
+		}
+		return list;
+	}
 }
