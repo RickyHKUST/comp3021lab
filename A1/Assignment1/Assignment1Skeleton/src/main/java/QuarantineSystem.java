@@ -64,6 +64,50 @@ public class QuarantineSystem {
         /*
          * TODO: Process each record
          */
+        for(Record r:Records) {
+        	for(Person p:People) {
+        		if(r.getIDCardNo().equals(p.getIDCardNo())) {
+        			
+        			if(r.getStatus()==Status.Confirmed) {
+
+        				// already exist
+        				boolean exist=false;
+        				for(Patient patient:Patients) {
+        					if(patient.getIDCardNo()==r.getIDCardNo()) {
+                				patient.setSymptomLevel(r.getSymptomLevel());
+                				exist=true;
+        					}
+        				}
+        				if(exist==false) {
+        					Patient patient = new Patient(p,r.getSymptomLevel());
+            				int distance=Hospitals.get(0).getLoc().getDisSquare(p.getLoc());
+                			String assignedID = Hospitals.get(0).HospitalID;
+                			for(Hospital h:Hospitals) {
+                					if(h.getLoc().getDisSquare(p.getLoc())<distance) {
+                						assignedID=h.HospitalID;
+                					}
+                				}
+                			r.setHospitalID(assignedID);
+                			patient.setHospitalID(assignedID);
+            				Patients.add(patient); 
+            			}
+        				
+        			}
+        			else if(r.getStatus()==Status.Recovered) {
+        				Patient remove=null;
+        				for(Patient patient:Patients) {
+        					if(patient.getIDCardNo().equals(r.getIDCardNo())) {
+        						r.setHospitalID(patient.getHospitalID());
+        						remove=patient;
+        					}
+        				}
+        				Patients.remove(remove);
+        			}
+        			break;
+        		}
+        	}
+        }
+        
         exportRecordTreatment();
 
         /*
