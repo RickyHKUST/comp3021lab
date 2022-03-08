@@ -10,7 +10,11 @@ public class Person {
 
     /* Class Constructor */
     public Person(String p_IDCardNo, Location p_loc, String p_gender, int p_age, boolean p_isVac) {
-        //TODO
+    	this.IDCardNo=p_IDCardNo;
+    	this.loc=p_loc;
+    	this.gender=p_gender;
+    	this.age=p_age;
+    	this.isVac=p_isVac;
     }
 
     public void setIDCardNo(String p_IDCardNo) {
