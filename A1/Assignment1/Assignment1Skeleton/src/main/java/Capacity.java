@@ -27,19 +27,19 @@ public class Capacity {
             case Critical:
                 if (this.CriticalCapacity > 0) {
                     this.CriticalCapacity -= 1;
-                    return false;
+                    return true;
                 }
                 break;
             case Moderate:
                 if (this.ModerateCapacity > 0) {
                     this.ModerateCapacity -= 1;
-                    return false;
+                    return true;
                 }
                 break;
             case Mild:
                 if (this.MildCapacity > 0) {
                     this.MildCapacity -= 1;
-                    return false;
+                    return true;
                 }
                 break;
             default:

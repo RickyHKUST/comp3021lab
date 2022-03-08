@@ -57,22 +57,48 @@ public class Hospital {
 
     /* Add a patient to the corresponding patient list */
     public boolean addPatient(Patient patient) {
-        switch (patient.getSymptomLevel()) {
-            //TODO: handle three kinds of the symptom levels
+    	
+    	SymptomLevel sl = patient.getSymptomLevel();
+    	if(cap.decreaseCapacity(sl)==false) {
+    		return false;
+    	}else {
+            switch (sl) {
+            case Critical:
+            		this.CriticalPatients.add(patient);
+            		break;
+            case Moderate:
+            		this.ModeratePatients.add(patient);
+            		break;
+            case Mild:
+            		this.MildPatients.add(patient);
+            		break;
             default:
-                break;
-        }
-        return false;
+                    break;
+            }
+            return true;
+    	}
     }
 
     /* Remove a patient from the corresponding patient list */
     public boolean releasePatient(Patient patient) {
-        switch (patient.getSymptomLevel()) {
-            //TODO: handle three kinds of the symptom levels
-            default:
-                break;
-        }
-        return false;
+    	SymptomLevel sl = patient.getSymptomLevel();
+	    switch (sl) {
+		    case Critical:
+		    		if(this.CriticalPatients.remove(patient))
+		    			{return cap.increaseCapacity(sl);}
+		    		break;
+		    case Moderate:
+		    		if(this.ModeratePatients.remove(patient))
+		    			{return cap.increaseCapacity(sl);}
+		    		break;
+		    case Mild:
+		    		if(this.MildPatients.remove(patient))
+		    			{return cap.increaseCapacity(sl);}
+		    		break;
+		    default:
+		            break;
+	    }
+	    return false;
     }
 
     /* Dump the hospital info as a string */
