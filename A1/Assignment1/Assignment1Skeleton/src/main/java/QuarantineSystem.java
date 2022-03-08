@@ -96,7 +96,7 @@ public class QuarantineSystem {
      */
     public void importPeople() throws IOException {
         this.People = new ArrayList<>();
-        File filename = new File("data/Person.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/data/Person.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -132,7 +132,7 @@ public class QuarantineSystem {
     public void importRecords() throws IOException {
         this.Records = new ArrayList<>();
 
-        File filename = new File("data/Record.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/data/Record.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -163,7 +163,7 @@ public class QuarantineSystem {
         this.Hospitals = new ArrayList<>();
         this.newHospitalNum = 0;
 
-        File filename = new File("data/Hospital.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/data/Hospital.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -197,7 +197,7 @@ public class QuarantineSystem {
      * Otherwise, you may generate wrong results in Task 1
      */
     public void exportRecordTreatment() throws IOException {
-        File filename = new File("output/RecordTreatment.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/output/RecordTreatment.txt");
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename));
         BufferedWriter bw = new BufferedWriter(writer);
         bw.write("IDCardNo        SymptomLevel        Status        HospitalID\n");
@@ -215,7 +215,7 @@ public class QuarantineSystem {
      * Otherwise, you may generate wrong results in Task 2
      */
     public void exportDashBoard() throws IOException {
-        File filename = new File("output/Statistics.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/output/Statistics.txt");
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename));
         BufferedWriter bw = new BufferedWriter(writer);
 
