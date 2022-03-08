@@ -1,3 +1,5 @@
+package Assignment1.Assignment1Skeleton.src.main.java;
+
 public class Location {
     public int xloc;
     public int yloc;

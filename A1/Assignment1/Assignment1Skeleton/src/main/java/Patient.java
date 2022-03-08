@@ -1,3 +1,5 @@
+package Assignment1.Assignment1Skeleton.src.main.java;
+
 enum SymptomLevel {
     Critical, Moderate, Mild
 }
@@ -11,7 +13,8 @@ public class Patient extends Person{
     * Remember to initialize the attributes in the Person
     */
     public Patient(Person p, SymptomLevel p_symptomLevel) {
-        //TODO
+        super(p.getIDCardNo(), p.getLoc(), p.getGender(), p.getAge(), p.getIsVac());
+        symptomLevel=p_symptomLevel;
     }
 
     public void setSymptomLevel(SymptomLevel p_symptomLevel) {

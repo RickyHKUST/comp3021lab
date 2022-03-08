@@ -1,3 +1,5 @@
+package Assignment1.Assignment1Skeleton.src.main.java;
+
 enum Status {
     Confirmed, Recovered
 }
