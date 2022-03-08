@@ -23,7 +23,7 @@ public class QuarantineSystem {
             this.vacInfectNums = new ArrayList<>(8);
         }
 
-        public void runDashBoard() {
+        public void runDashBoard(List<Record> Records) {
             for (int i = 0; i < 8; i++) {
                 this.patientNums.add(0);
                 this.infectNums.add(0);
@@ -35,6 +35,23 @@ public class QuarantineSystem {
              * TODO: Collect the statistics based on People
              *  Add the data in the lists, such as patientNums, infectNums, etc.
              */
+            
+            for(Person p:this.People) {
+            	
+            	int ageIndex=p.getAge()/10;
+            	patientNums.set(ageIndex, patientNums.get(ageIndex)+Math.min(p.getInfectCnt(),1));
+            	infectNums.set(ageIndex, infectNums.get(ageIndex)+p.getInfectCnt());
+            	
+            	if(p.getIsVac()) {
+        			vacNums.set(ageIndex, vacNums.get(ageIndex)+1);
+        			vacInfectNums.set(ageIndex, vacInfectNums.get(ageIndex)+p.getInfectCnt());
+        		}
+            }
+            
+            for (int i = 0; i < 8; i++) {
+                this.infectAvgNums.add((patientNums.get(i)==0)?0:((double)infectNums.get(i))/((double)patientNums.get(i)));
+            }
+            
         }
     }
 
@@ -79,6 +96,7 @@ public class QuarantineSystem {
         					}
         				}
         				if(exist==false) {
+        					p.setInfectCnt(p.getInfectCnt()+1);
         					Patient patient = new Patient(p,r.getSymptomLevel());
             				int distance=Hospitals.get(0).getLoc().getDisSquare(p.getLoc());
                 			String assignedID = Hospitals.get(0).HospitalID;
@@ -115,7 +133,7 @@ public class QuarantineSystem {
          */
         System.out.println("Task 2: Displaying Statistics");
         dashBoard = new DashBoard(this.People);
-        dashBoard.runDashBoard();
+        dashBoard.runDashBoard(Records);
         exportDashBoard();
     }
 

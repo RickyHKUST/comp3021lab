@@ -15,6 +15,7 @@ public class Person {
     	this.gender=p_gender;
     	this.age=p_age;
     	this.isVac=p_isVac;
+    	this.infectCnt=0;
     }
 
     public void setIDCardNo(String p_IDCardNo) {
