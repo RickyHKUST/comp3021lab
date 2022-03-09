@@ -2,19 +2,22 @@ package Assignment1.Assignment1Skeleton.src.main.java;
 
 import java.io.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class QuarantineSystem {
     public static class DashBoard {
-        List<Person> People;
+    	Map<String, Person> People;
         List<Integer> patientNums;
         List<Integer> infectNums;
         List<Double> infectAvgNums;
         List<Integer> vacNums;
         List<Integer> vacInfectNums;
 
-        public DashBoard(List<Person> p_People) {
+        public DashBoard(Map<String, Person> p_People) {
             this.People = p_People;
             this.patientNums = new ArrayList<>(8);
             this.infectNums = new ArrayList<>(8);
@@ -23,7 +26,7 @@ public class QuarantineSystem {
             this.vacInfectNums = new ArrayList<>(8);
         }
 
-        public void runDashBoard(List<Record> Records) {
+        public void runDashBoard() {
             for (int i = 0; i < 8; i++) {
                 this.patientNums.add(0);
                 this.infectNums.add(0);
@@ -36,8 +39,9 @@ public class QuarantineSystem {
              *  Add the data in the lists, such as patientNums, infectNums, etc.
              */
             
-            for(Person p:this.People) {
+            for(Entry<String,Person> peopleSet:this.People.entrySet()) {
             	
+            	Person p=peopleSet.getValue();
             	int ageIndex=p.getAge()/10;
             	patientNums.set(ageIndex, patientNums.get(ageIndex)+Math.min(p.getInfectCnt(),1));
             	infectNums.set(ageIndex, infectNums.get(ageIndex)+p.getInfectCnt());
@@ -56,12 +60,12 @@ public class QuarantineSystem {
     }
 
 
-    private List<Person> People;
-    private List<Patient> Patients;
+    private Map<String,Person> People;
+    private Map<String,Patient> Patients;
 
     private List<Record> Records;
-    private List<Hospital> Hospitals;
-    private int newHospitalNum;
+    private Integer newHospitalNum;
+    private Map<String,Hospital> Hospitals;
 
     private DashBoard dashBoard;
 
@@ -70,7 +74,7 @@ public class QuarantineSystem {
         importHospital();
         importRecords();
         dashBoard = null;
-        Patients = new ArrayList<>();
+        Patients = new HashMap<>();
     }
 
     public void startQuarantine() throws IOException {
@@ -82,47 +86,71 @@ public class QuarantineSystem {
          * TODO: Process each record
          */
         for(Record r:Records) {
-        	for(Person p:People) {
-        		if(r.getIDCardNo().equals(p.getIDCardNo())) {
-        			
-        			if(r.getStatus()==Status.Confirmed) {
-
-        				// already exist
-        				boolean exist=false;
-        				for(Patient patient:Patients) {
-        					if(patient.getIDCardNo()==r.getIDCardNo()) {
-                				patient.setSymptomLevel(r.getSymptomLevel());
-                				exist=true;
-        					}
-        				}
-        				if(exist==false) {
-        					p.setInfectCnt(p.getInfectCnt()+1);
-        					Patient patient = new Patient(p,r.getSymptomLevel());
-            				int distance=Hospitals.get(0).getLoc().getDisSquare(p.getLoc());
-                			String assignedID = Hospitals.get(0).HospitalID;
-                			for(Hospital h:Hospitals) {
-                					if(h.getLoc().getDisSquare(p.getLoc())<distance) {
-                						assignedID=h.HospitalID;
-                					}
-                				}
-                			r.setHospitalID(assignedID);
-                			patient.setHospitalID(assignedID);
-            				Patients.add(patient); 
+        	
+        	Person p = People.get(r.getIDCardNo());
+    			
+        	switch(r.getStatus()) {
+        		case Confirmed:
+        			Patient patient = Patients.get(r.getIDCardNo());
+    				// already confirmed
+    				if(patient!=null) {
+        				patient.setSymptomLevel(r.getSymptomLevel());
+    					r.setHospitalID(patient.getHospitalID());
+    				}
+    				// recovered or not yet confirmed
+    				else{
+    					Map<Integer, Hospital> distanceMap = new HashMap<>();
+    					
+    					p.setInfectCnt(p.getInfectCnt()+1);
+    					
+    					patient = new Patient(p,r.getSymptomLevel());
+        				Patients.put(p.getIDCardNo(),patient); 
+    					//Get the hospital distance
+            			for(Entry<String,Hospital> hospitalSet:Hospitals.entrySet()) {
+            				Hospital h = hospitalSet.getValue();
+            				distanceMap.put(h.getLoc().getDisSquare(p.getLoc()), h);
             			}
-        				
-        			}
-        			else if(r.getStatus()==Status.Recovered) {
-        				Patient remove=null;
-        				for(Patient patient:Patients) {
-        					if(patient.getIDCardNo().equals(r.getIDCardNo())) {
-        						r.setHospitalID(patient.getHospitalID());
-        						remove=patient;
-        					}
-        				}
-        				Patients.remove(remove);
+            			//Sorting
+            			List<Entry<Integer,Hospital>> distanceMapList = new ArrayList<>(distanceMap.entrySet());
+            			distanceMapList.sort(Entry.comparingByKey());
+            			//Finding hospital with enough capacities
+            			String assignedID=null;
+            			for(int i=0;i<distanceMapList.size();i++) {
+            				Hospital h=distanceMapList.get(i).getValue();
+            				if(h.getCapacity().getSingleCapacity(r.getSymptomLevel())>0) {
+            					assignedID=h.HospitalID;
+            					break;
+            				}
+            			}
+            			//Using old hospital
+            			if(assignedID!=null) {
+                			r.setHospitalID(assignedID);
+            			}
+            			//Constructing new hospital
+            			else {
+            				newHospitalNum++;
+            				assignedID="H-New-"+newHospitalNum.toString();
+            				Hospital hospital= new Hospital(assignedID,p.getLoc());
+            				Hospitals.put(assignedID, hospital);
+                			r.setHospitalID(assignedID);
+            			}
+            			patient.setHospitalID(assignedID);
         			}
         			break;
-        		}
+        			
+        		case Recovered:
+    				String removePatientID=null;
+    				for(Entry<String,Patient> patientSet:Patients.entrySet()) {
+    					if(patientSet.getValue().getIDCardNo().equals(r.getIDCardNo())) {
+    						r.setHospitalID(patientSet.getValue().getHospitalID());
+    						removePatientID=patientSet.getKey();
+    					}
+    				}
+    				Patients.remove(removePatientID);
+        			break;
+        			
+        		default:
+        			break;
         	}
         }
         
@@ -133,7 +161,7 @@ public class QuarantineSystem {
          */
         System.out.println("Task 2: Displaying Statistics");
         dashBoard = new DashBoard(this.People);
-        dashBoard.runDashBoard(Records);
+        dashBoard.runDashBoard();
         exportDashBoard();
     }
 
@@ -157,7 +185,7 @@ public class QuarantineSystem {
      * You do not need to change the method.
      */
     public void importPeople() throws IOException {
-        this.People = new ArrayList<>();
+        this.People = new HashMap<>();
         File filename = new File("A1/Assignment1/Assignment1Skeleton/data/Person.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
@@ -180,7 +208,7 @@ public class QuarantineSystem {
                 assert (records[5].equals("Yes") || records[5].equals("No"));
                 boolean pIsVac = (records[5].equals("Yes"));
                 Person p = new Person(pIDCardNo, pLoc, pGender, pAge, pIsVac);
-                this.People.add(p);
+                this.People.put(pIDCardNo,p);
             }
             line = br.readLine();
         }
@@ -222,7 +250,7 @@ public class QuarantineSystem {
      * You do not need to change the method.
      */
     public void importHospital() throws IOException {
-        this.Hospitals = new ArrayList<>();
+        this.Hospitals = new HashMap<>();
         this.newHospitalNum = 0;
 
         File filename = new File("A1/Assignment1/Assignment1Skeleton/data/Hospital.txt");
@@ -246,7 +274,7 @@ public class QuarantineSystem {
                 int pMildCapacity = Integer.parseInt(records[5]);
                 Capacity cap = new Capacity(pCritialCapacity, pModerateCapacity, pMildCapacity);
                 Hospital hospital = new Hospital(pHospitalID, pLoc, cap);
-                this.Hospitals.add(hospital);
+                this.Hospitals.put(pHospitalID,hospital);
             }
             line = br.readLine();
         }
