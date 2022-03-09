@@ -82,73 +82,15 @@ public class QuarantineSystem {
          * Task 1: Saving Patients
          */
         System.out.println("Task 1: Saving Patients");
-        /*
-         * TODO: Process each record
-         */
+        
         for(Record r:Records) {
-        	
-        	Person p = People.get(r.getIDCardNo());
-    			
         	switch(r.getStatus()) {
         		case Confirmed:
-        			Patient patient = Patients.get(r.getIDCardNo());
-    				// already confirmed
-    				if(patient!=null) {
-        				patient.setSymptomLevel(r.getSymptomLevel());
-    					r.setHospitalID(patient.getHospitalID());
-    				}
-    				// recovered or not yet confirmed
-    				else{
-    					Map<Integer, Hospital> distanceMap = new HashMap<>();
-    					
-    					p.setInfectCnt(p.getInfectCnt()+1);
-    					
-    					patient = new Patient(p,r.getSymptomLevel());
-        				Patients.put(p.getIDCardNo(),patient); 
-    					//Get the hospital distance
-            			for(Entry<String,Hospital> hospitalSet:Hospitals.entrySet()) {
-            				Hospital h = hospitalSet.getValue();
-            				distanceMap.put(h.getLoc().getDisSquare(p.getLoc()), h);
-            			}
-            			//Sorting
-            			List<Entry<Integer,Hospital>> distanceMapList = new ArrayList<>(distanceMap.entrySet());
-            			distanceMapList.sort(Entry.comparingByKey());
-            			//Finding hospital with enough capacities
-            			String assignedID=null;
-            			for(int i=0;i<distanceMapList.size();i++) {
-            				Hospital h=distanceMapList.get(i).getValue();
-            				if(h.getCapacity().getSingleCapacity(r.getSymptomLevel())>0) {
-            					assignedID=h.HospitalID;
-            					break;
-            				}
-            			}
-            			//Using old hospital
-            			if(assignedID!=null) {
-                			r.setHospitalID(assignedID);
-            			}
-            			//Constructing new hospital
-            			else {
-            				newHospitalNum++;
-            				assignedID="H-New-"+newHospitalNum.toString();
-            				Hospital hospital= new Hospital(assignedID,p.getLoc());
-            				Hospitals.put(assignedID, hospital);
-                			r.setHospitalID(assignedID);
-            			}
-            			patient.setHospitalID(assignedID);
-        			}
+        			saveSinglePatient(r);
         			break;
-        			
         		case Recovered:
-    				String removePatientID=null;
-    				for(Entry<String,Patient> patientSet:Patients.entrySet()) {
-    					if(patientSet.getValue().getIDCardNo().equals(r.getIDCardNo())) {
-    						r.setHospitalID(patientSet.getValue().getHospitalID());
-    						removePatientID=patientSet.getKey();
-    					}
-    				}
-    				Patients.remove(removePatientID);
+        			releaseSinglePatient(r);
         			break;
-        			
         		default:
         			break;
         	}
@@ -168,15 +110,67 @@ public class QuarantineSystem {
     /*
      * Save a single patient when the status of the record is Confirmed
      */
-    public void saveSinglePatient(Record record) {
-        //TODO
+    public void saveSinglePatient(Record r) {
+    	Person p = People.get(r.getIDCardNo());
+    	Patient patient = Patients.get(r.getIDCardNo());
+		// already confirmed
+		if(patient!=null) {
+			patient.setSymptomLevel(r.getSymptomLevel());
+			r.setHospitalID(patient.getHospitalID());
+		}
+		// recovered or not yet confirmed
+		else{
+			Map<Integer, Hospital> distanceMap = new HashMap<>();
+			
+			p.setInfectCnt(p.getInfectCnt()+1);
+			
+			patient = new Patient(p,r.getSymptomLevel());
+			Patients.put(p.getIDCardNo(),patient); 
+			//Get the hospital distance
+			for(Entry<String,Hospital> hospitalSet:Hospitals.entrySet()) {
+				Hospital h = hospitalSet.getValue();
+				distanceMap.put(h.getLoc().getDisSquare(p.getLoc()), h);
+			}
+			//Sorting
+			List<Entry<Integer,Hospital>> distanceMapList = new ArrayList<>(distanceMap.entrySet());
+			distanceMapList.sort(Entry.comparingByKey());
+			//Finding hospital with enough capacities
+			String assignedID=null;
+			for(int i=0;i<distanceMapList.size();i++) {
+				Hospital h=distanceMapList.get(i).getValue();
+				if(h.getCapacity().getSingleCapacity(r.getSymptomLevel())>0) {
+					assignedID=h.HospitalID;
+					break;
+				}
+			}
+			//Using old hospital
+			if(assignedID!=null) {
+    			r.setHospitalID(assignedID);
+			}
+			//Constructing new hospital
+			else {
+				newHospitalNum++;
+				assignedID="H-New-"+newHospitalNum.toString();
+				Hospital hospital= new Hospital(assignedID,p.getLoc());
+				Hospitals.put(assignedID, hospital);
+    			r.setHospitalID(assignedID);
+			}
+			patient.setHospitalID(assignedID);
+		}
     }
 
     /*
      * Release a single patient when the status of the record is Recovered
      */
-    public void releaseSinglePatient(Record record) {
-        //TODO
+    public void releaseSinglePatient(Record r) {
+    	String removePatientID=null;
+		for(Entry<String,Patient> patientSet:Patients.entrySet()) {
+			if(patientSet.getValue().getIDCardNo().equals(r.getIDCardNo())) {
+				r.setHospitalID(patientSet.getValue().getHospitalID());
+				removePatientID=patientSet.getKey();
+			}
+		}
+		Patients.remove(removePatientID);
     }
 
     /*
