@@ -155,6 +155,7 @@ public class QuarantineSystem {
 				Hospital hospital= new Hospital(assignedID,p.getLoc());
 				Hospitals.put(assignedID, hospital);
     			r.setHospitalID(assignedID);
+    			hospital.addPatient(patient);
 			}
 			patient.setHospitalID(assignedID);
 		}
@@ -169,6 +170,11 @@ public class QuarantineSystem {
 		r.setHospitalID(h.HospitalID);
 		h.releasePatient(patient);
 		Patients.remove(patient.getIDCardNo());
+		if(h.getPatients(SymptomLevel.Critical)==null && h.getPatients(SymptomLevel.Mild)==null && h.getPatients(SymptomLevel.Moderate)==null) {
+			if(h.HospitalID.contains("h-New-")) {
+				Hospitals.remove(h.HospitalID);
+			}
+		}
     }
 
     /*
@@ -178,7 +184,7 @@ public class QuarantineSystem {
      */
     public void importPeople() throws IOException {
         this.People = new HashMap<>();
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/data/Person.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample3/data/Person.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -214,7 +220,7 @@ public class QuarantineSystem {
     public void importRecords() throws IOException {
         this.Records = new ArrayList<>();
 
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/data/Record.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample3/data/Record.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -245,7 +251,7 @@ public class QuarantineSystem {
         this.Hospitals = new HashMap<>();
         this.newHospitalNum = 0;
 
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/data/Hospital.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample3/data/Hospital.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -279,7 +285,7 @@ public class QuarantineSystem {
      * Otherwise, you may generate wrong results in Task 1
      */
     public void exportRecordTreatment() throws IOException {
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/output/RecordTreatment.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample3/output/RecordTreatment.txt");
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename));
         BufferedWriter bw = new BufferedWriter(writer);
         bw.write("IDCardNo        SymptomLevel        Status        HospitalID\n");
@@ -297,7 +303,7 @@ public class QuarantineSystem {
      * Otherwise, you may generate wrong results in Task 2
      */
     public void exportDashBoard() throws IOException {
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/output/Statistics.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample3/output/Statistics.txt");
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename));
         BufferedWriter bw = new BufferedWriter(writer);
 
