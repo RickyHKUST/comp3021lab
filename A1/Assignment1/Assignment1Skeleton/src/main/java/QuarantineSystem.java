@@ -33,11 +33,6 @@ public class QuarantineSystem {
                 this.vacNums.add(0);
                 this.vacInfectNums.add(0);
             }
-
-            /*
-             * TODO: Collect the statistics based on People
-             *  Add the data in the lists, such as patientNums, infectNums, etc.
-             */
             
             for(Entry<String,Person> peopleSet:this.People.entrySet()) {
             	
@@ -210,6 +205,7 @@ public class QuarantineSystem {
             }
             line = br.readLine();
         }
+        br.close();
     }
 
     /*
@@ -240,6 +236,7 @@ public class QuarantineSystem {
             }
             line = br.readLine();
         }
+        br.close();
     }
 
     /*
@@ -276,6 +273,7 @@ public class QuarantineSystem {
             }
             line = br.readLine();
         }
+        br.close();
     }
 
     /*
