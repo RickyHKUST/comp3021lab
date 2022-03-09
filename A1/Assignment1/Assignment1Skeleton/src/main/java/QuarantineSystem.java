@@ -48,7 +48,7 @@ public class QuarantineSystem {
             	
             	if(p.getIsVac()) {
         			vacNums.set(ageIndex, vacNums.get(ageIndex)+1);
-        			vacInfectNums.set(ageIndex, vacInfectNums.get(ageIndex)+p.getInfectCnt());
+        			vacInfectNums.set(ageIndex, vacInfectNums.get(ageIndex)+Math.min(p.getInfectCnt(),1));
         		}
             }
             
@@ -140,6 +140,7 @@ public class QuarantineSystem {
 				Hospital h=distanceMapList.get(i).getValue();
 				if(h.getCapacity().getSingleCapacity(r.getSymptomLevel())>0) {
 					assignedID=h.HospitalID;
+					h.addPatient(patient);
 					break;
 				}
 			}
@@ -163,14 +164,11 @@ public class QuarantineSystem {
      * Release a single patient when the status of the record is Recovered
      */
     public void releaseSinglePatient(Record r) {
-    	String removePatientID=null;
-		for(Entry<String,Patient> patientSet:Patients.entrySet()) {
-			if(patientSet.getValue().getIDCardNo().equals(r.getIDCardNo())) {
-				r.setHospitalID(patientSet.getValue().getHospitalID());
-				removePatientID=patientSet.getKey();
-			}
-		}
-		Patients.remove(removePatientID);
+    	Patient patient=Patients.get(r.getIDCardNo());
+		Hospital h=Hospitals.get(patient.getHospitalID());
+		r.setHospitalID(h.HospitalID);
+		h.releasePatient(patient);
+		Patients.remove(patient.getIDCardNo());
     }
 
     /*
@@ -180,7 +178,7 @@ public class QuarantineSystem {
      */
     public void importPeople() throws IOException {
         this.People = new HashMap<>();
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample1/data/Person.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/data/Person.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -216,7 +214,7 @@ public class QuarantineSystem {
     public void importRecords() throws IOException {
         this.Records = new ArrayList<>();
 
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample1/data/Record.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/data/Record.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -247,7 +245,7 @@ public class QuarantineSystem {
         this.Hospitals = new HashMap<>();
         this.newHospitalNum = 0;
 
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample1/data/Hospital.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/data/Hospital.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
@@ -281,7 +279,7 @@ public class QuarantineSystem {
      * Otherwise, you may generate wrong results in Task 1
      */
     public void exportRecordTreatment() throws IOException {
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample1/output/RecordTreatment.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/output/RecordTreatment.txt");
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename));
         BufferedWriter bw = new BufferedWriter(writer);
         bw.write("IDCardNo        SymptomLevel        Status        HospitalID\n");
@@ -299,7 +297,7 @@ public class QuarantineSystem {
      * Otherwise, you may generate wrong results in Task 2
      */
     public void exportDashBoard() throws IOException {
-        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample1/output/Statistics.txt");
+        File filename = new File("A1/Assignment1/Assignment1Skeleton/sampleData/sample2/output/Statistics.txt");
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename));
         BufferedWriter bw = new BufferedWriter(writer);
 
