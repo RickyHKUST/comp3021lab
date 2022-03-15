@@ -1,17 +1,14 @@
 package base;
 
 import java.io.File;
-import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 
 public class TextNote extends Note {
+	
+	private static final long serialVersionUID = 1L;
 	String content;
 	
 	public TextNote(String title) {
