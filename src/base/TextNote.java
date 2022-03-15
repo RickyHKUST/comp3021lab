@@ -41,7 +41,6 @@ public class TextNote extends Note {
 	*/
 	private String getTextFromFile(String absolutePath) {
 		String result = "";
-		if(absolutePath.equals("")) {absolutePath=".";}
 		FileInputStream fis=null;
 		ObjectInputStream in =null;
 		try {
@@ -72,9 +71,7 @@ public class TextNote extends Note {
 		File file = new File( pathFolder+File.separator+this.getTitle().replaceAll(" ", "_")+".txt");
 		FileWriter writer;
 		try {
-			if(file.exists()) {writer = new FileWriter(file,true);}
-			else {writer = new FileWriter(file);}
-			
+			writer = new FileWriter(file);
 			writer.write(content);
 			writer.flush();
 			writer.close();
