@@ -37,7 +37,7 @@ public class QuarantineSystem {
             for(Entry<String,Person> peopleSet:this.People.entrySet()) {
             	
             	Person p=peopleSet.getValue();
-            	int ageIndex=p.getAge()/10;
+            	int ageIndex=Math.min(p.getAge()/10,7);
             	patientNums.set(ageIndex, patientNums.get(ageIndex)+Math.min(p.getInfectCnt(),1));
             	infectNums.set(ageIndex, infectNums.get(ageIndex)+p.getInfectCnt());
             	
