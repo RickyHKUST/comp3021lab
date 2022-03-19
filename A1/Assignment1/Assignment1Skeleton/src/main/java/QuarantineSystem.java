@@ -110,50 +110,60 @@ public class QuarantineSystem {
     	Patient patient = Patients.get(r.getIDCardNo());
 		// already confirmed
 		if(patient!=null) {
-			patient.setSymptomLevel(r.getSymptomLevel());
-			r.setHospitalID(patient.getHospitalID());
+			if(r.getSymptomLevel()==patient.getSymptomLevel()) {
+				r.setHospitalID(patient.getHospitalID());
+			}
+			else {
+				//Remove previous hospital
+				Hospital oldHospital=Hospitals.get(patient.getHospitalID());
+				oldHospital.releasePatient(patient);
+				patient.setSymptomLevel(r.getSymptomLevel());
+				//Get next hospital
+				Hospital hospital=getClosestHopsptialID(r.getSymptomLevel(),oldHospital.getLoc());
+				if(hospital==null) {hospital = constructNewHospital(p);}
+				hospital.addPatient(patient);
+				r.setHospitalID(hospital.HospitalID);
+			}
 		}
 		// recovered or not yet confirmed
 		else{
-			Map<Integer, Hospital> distanceMap = new HashMap<>();
-			
 			p.setInfectCnt(p.getInfectCnt()+1);
-			
 			patient = new Patient(p,r.getSymptomLevel());
 			Patients.put(p.getIDCardNo(),patient); 
-			//Get the hospital distance
-			for(Entry<String,Hospital> hospitalSet:Hospitals.entrySet()) {
-				Hospital h = hospitalSet.getValue();
-				distanceMap.put(h.getLoc().getDisSquare(p.getLoc()), h);
-			}
-			//Sorting
-			List<Entry<Integer,Hospital>> distanceMapList = new ArrayList<>(distanceMap.entrySet());
-			distanceMapList.sort(Entry.comparingByKey());
-			//Finding hospital with enough capacities
-			String assignedID=null;
-			for(int i=0;i<distanceMapList.size();i++) {
-				Hospital h=distanceMapList.get(i).getValue();
-				if(h.getCapacity().getSingleCapacity(r.getSymptomLevel())>0) {
-					assignedID=h.HospitalID;
-					h.addPatient(patient);
-					break;
-				}
-			}
-			//Using old hospital
-			if(assignedID!=null) {
-    			r.setHospitalID(assignedID);
-			}
-			//Constructing new hospital
-			else {
-				newHospitalNum++;
-				assignedID="H-New-"+newHospitalNum.toString();
-				Hospital hospital= new Hospital(assignedID,p.getLoc());
-				Hospitals.put(assignedID, hospital);
-    			r.setHospitalID(assignedID);
-    			hospital.addPatient(patient);
-			}
-			patient.setHospitalID(assignedID);
+			//Get hospital ID
+			Hospital hospital=getClosestHopsptialID(r.getSymptomLevel(),p.getLoc());
+			if(hospital==null) {hospital = constructNewHospital(p);}
+			//Setting
+			hospital.addPatient(patient);
+			r.setHospitalID(hospital.HospitalID);
+			patient.setHospitalID(hospital.HospitalID);
 		}
+    }
+    
+    private Hospital getClosestHopsptialID(SymptomLevel sl,Location lc) {
+		Map<Integer, Hospital> distanceMap = new HashMap<>();
+		//Get the hospital distance
+		for(Entry<String,Hospital> hospitalSet:Hospitals.entrySet()) {
+			Hospital h = hospitalSet.getValue();
+			distanceMap.put(h.getLoc().getDisSquare(lc), h);
+		}
+		//Sorting
+		List<Entry<Integer,Hospital>> distanceMapList = new ArrayList<>(distanceMap.entrySet());
+		distanceMapList.sort(Entry.comparingByKey());
+		//Finding hospital with enough capacities
+		for(int i=0;i<distanceMapList.size();i++) {
+			Hospital h=distanceMapList.get(i).getValue();
+			if(h.getCapacity().getSingleCapacity(sl)>0) {return h;}
+		}
+		return null;
+    }
+    
+    private Hospital constructNewHospital(Person p) {
+    	newHospitalNum++;
+    	String assignedID= "H-New-"+newHospitalNum.toString();
+		Hospital hospital= new Hospital(assignedID,p.getLoc());
+		Hospitals.put(assignedID, hospital);
+		return hospital;
     }
 
     /*
