@@ -141,18 +141,18 @@ public class QuarantineSystem {
     }
     
     private Hospital getClosestHopsptialID(SymptomLevel sl,Location lc) {
-		Map<Integer, Hospital> distanceMap = new HashMap<>();
+		Map<Hospital, Integer> distanceMap = new HashMap<>();
 		//Get the hospital distance
 		for(Entry<String,Hospital> hospitalSet:Hospitals.entrySet()) {
 			Hospital h = hospitalSet.getValue();
-			distanceMap.put(h.getLoc().getDisSquare(lc), h);
+			distanceMap.put(h, h.getLoc().getDisSquare(lc));
 		}
 		//Sorting
-		List<Entry<Integer,Hospital>> distanceMapList = new ArrayList<>(distanceMap.entrySet());
-		distanceMapList.sort(Entry.comparingByKey());
+		List<Entry<Hospital,Integer>> distanceMapList = new ArrayList<>(distanceMap.entrySet());
+		distanceMapList.sort(Entry.comparingByValue());
 		//Finding hospital with enough capacities
 		for(int i=0;i<distanceMapList.size();i++) {
-			Hospital h=distanceMapList.get(i).getValue();
+			Hospital h=distanceMapList.get(i).getKey();
 			if(h.getCapacity().getSingleCapacity(sl)>0) {return h;}
 		}
 		return null;
