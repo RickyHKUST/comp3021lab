@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class StringProcessingSystem {
     private static String originalText;
-    private static String modifiedText;  //It is not complustory to update this field. We just create it for you to store the temporary result for the task 2,3, and 5.
+    private static String modifiedText;  //It is not compulsory to update this field. We just create it for you to store the temporary result for the task 2,3, and 5.
     private static Scanner reader=new Scanner(System.in); //static reader, no need to open reader in the methods of the class
 
     public static void split() {
@@ -12,6 +12,10 @@ public class StringProcessingSystem {
 
         // TODO 1: Split the string whenever there is a delimiter
         //         Output each substring in separate line
+        String[] outputs = originalText.split(target);
+        for(String s:outputs) {
+        	System.out.println(s);
+        }
     }
 
     public static void removeSubstring() {
@@ -25,6 +29,19 @@ public class StringProcessingSystem {
         //         e.g., original = "Hello World", target = "Wor"
         //               target = "Hello ld"
 
+        modifiedText = "";
+        int targetIndex=0,textIndex=0;
+        while(textIndex<originalText.length()) {
+        	if(targetIndex<target.length() && target.charAt(targetIndex)==originalText.charAt(textIndex))
+        		targetIndex++;
+        	else
+        		modifiedText+=originalText.charAt(textIndex);
+    		textIndex++;
+        }
+        if(modifiedText.equals(originalText))
+        	System.out.println("target is not found");
+        else
+        	System.out.println("String after removing \'" + target + "\': " + modifiedText);
     }
 
 
@@ -36,14 +53,21 @@ public class StringProcessingSystem {
         //         e.g., Input string: "Hello World"
         //               shiftAmount: 3
         //               Result: "rldHello Wo"
+        int length = originalText.length();
+        int shift=(shiftAmount%length + length)%length;
+    	modifiedText=originalText.substring(length-shift,length) + originalText.substring(0,length-shift);
+        System.out.println("After shifting \"" + originalText + "\" by "+shiftAmount+": " + modifiedText);
     }
 
 
     public static void countVowels() {
         // TODO 4: Count number of vowels in String. (A, E, I, O, U, a, e, i, o, and u)
-
-
-
+    	int counter=0;
+    	String vowels = "AEIOUaeiou";
+    	for(char s:originalText.toCharArray()) {
+    		if(vowels.indexOf(s)!=-1) {counter++;}
+    	}
+    	System.out.println("number of vowels in \"" + originalText + "\": "+counter);
     }
 
     public static void ceaserCipher() {
@@ -57,6 +81,17 @@ public class StringProcessingSystem {
         //               shiftAmount: 30
         //               Result: "LIPPS ASVPH! 123"
 
+        modifiedText="";
+        shift=(shift%26+26)%26;
+        for(char s:originalText.toCharArray()) {
+        	if(s<='z' && s>='a') {s=(char) (s+'A'-'a');}
+        	if(s<='Z' && s>='A') {
+        		s=(char)(s+shift);
+        		if (s>='Z') s-=26;
+        	}
+        	modifiedText+=s;
+        }
+        System.out.println("ciphertext: " + modifiedText);
     }
 
     public static void main(String args[]){
