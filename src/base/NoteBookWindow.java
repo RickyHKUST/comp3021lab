@@ -55,6 +55,11 @@ public class NoteBookWindow extends Application {
 	 * 
 	 */
 	final ComboBox<String> foldersComboBox = new ComboBox<String>();
+	
+	final TextField textFieldSearch = new TextField();
+	final Button buttonSearch = new Button("Search");
+	final Button buttonClearSearch = new Button("Clear Search");
+	
 	/**
 	 * This is our Notebook object
 	 */
@@ -106,8 +111,30 @@ public class NoteBookWindow extends Application {
 		buttonSave.setPrefSize(100, 20);
 		buttonSave.setDisable(true);
 
-		hbox.getChildren().addAll(buttonLoad, buttonSave);
+		hbox.getChildren().addAll(buttonLoad, buttonSave, new Label("Search : "), textFieldSearch, buttonSearch, buttonClearSearch);
 
+		buttonSearch.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				currentSearch = textFieldSearch.getText();
+				if(currentSearch.equals("")) {return;}
+				textAreaNote.setText("");
+				List<Note> notes=noteBook.searchNotes(currentSearch);
+				List<String> titles = new ArrayList<String>();
+				for(Note note:notes) {
+					titles.add(note.title);
+				}
+				titleslistView.setItems(FXCollections.observableArrayList(titles));
+			}
+		});
+		
+		buttonClearSearch.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				textFieldSearch.setText("");
+			}
+		});
+		
 		return hbox;
 	}
 
@@ -123,7 +150,9 @@ public class NoteBookWindow extends Application {
 		vbox.setSpacing(8); // Gap between nodes
 
 		// TODO: This line is a fake folder list. We should display the folders in noteBook variable! Replace this with your implementation
-		foldersComboBox.getItems().addAll("FOLDER NAME 1", "FOLDER NAME 2", "FOLDER NAME 3");
+		for(Folder folder: noteBook.getFolders()) {
+			foldersComboBox.getItems().add(folder.getName());
+		}
 
 		foldersComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
 			@Override
@@ -151,6 +180,14 @@ public class NoteBookWindow extends Application {
 				// TODO load the content of the selected note in
 				// textAreNote
 				String content = "";
+				for(Folder folder: noteBook.getFolders()) {
+					for(Note note: folder.getNotes()) {
+						if(note.title.equals(title)) {
+							TextNote textnote = (TextNote) note;
+							content = textnote.content;
+						}
+					}
+				}
 				textAreaNote.setText(content);
 
 			}
@@ -168,6 +205,13 @@ public class NoteBookWindow extends Application {
 
 		// TODO populate the list object with all the TextNote titles of the
 		// currentFolder
+		for(Folder folder: noteBook.getFolders()) {
+			if(folder.getName().equals(currentFolder)) {
+				for(Note note: folder.getNotes())
+					list.add(note.title);
+				break;
+			}
+		}
 
 		ObservableList<String> combox2 = FXCollections.observableArrayList(list);
 		titleslistView.setItems(combox2);
