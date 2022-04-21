@@ -82,12 +82,32 @@ public class NoteBook implements Serializable{
 		folders.sort(null);
 	}
 	
+	public void addFolder(String folderName) {
+		folders.add(new Folder(folderName));
+	}
+	
 	public ArrayList<Note> searchNotes(String keywords){
 		ArrayList<Note> list = new ArrayList<Note>();
 		for(Folder f:folders) {
 			list.addAll(f.searchNotes(keywords));
 		}
 		return list;
+	}
+	
+	public Folder getFolder(String folderName) {
+		for(Folder folder:folders) {
+			if(folder.getName().equals(folderName)) {return folder;}
+		}
+		return null;
+	}
+	
+	public Note getNote(String noteName) {
+		for(Folder folder:folders) {
+			for(Note note:folder.getNotes()) {
+				if(note.getTitle().equals(noteName)) {return note;}
+			}
+		}
+		return null;
 	}
 	
 	
