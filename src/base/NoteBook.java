@@ -101,6 +101,14 @@ public class NoteBook implements Serializable{
 		return null;
 	}
 	
+	public Note getNote(String folderName,String noteName) {
+		Folder folder = getFolder(folderName);
+			for(Note note:folder.getNotes()) {
+				if(note.getTitle().equals(noteName)) {return note;}
+			}
+		return null;
+	}
+	
 	public Note getNote(String noteName) {
 		for(Folder folder:folders) {
 			for(Note note:folder.getNotes()) {
@@ -131,6 +139,20 @@ public class NoteBook implements Serializable{
 			return false;
 		}
 		return true;
+	}
+	public void saveNote(String folderName,String noteName, String content) {
+		Note note = getNote(folderName,noteName);
+		if(note instanceof TextNote) {
+			TextNote textnote = (TextNote) note;
+			textnote.content = content;
+		}
+		else {return;}
+	}
+	public void removeNote(String folderName, String noteName) {
+		Folder folder = getFolder(folderName);
+		Note note = getNote(folderName,noteName);
+		folder.getNotes().remove(note);
+		
 	}
 
 }
