@@ -109,16 +109,6 @@ public class NoteBook implements Serializable{
 		return null;
 	}
 	
-	public Note getNote(String noteName) {
-		for(Folder folder:folders) {
-			for(Note note:folder.getNotes()) {
-				if(note.getTitle().equals(noteName)) {return note;}
-			}
-		}
-		return null;
-	}
-	
-	
 	/**
 	 * method to save the NoteBook instance to file
 	 * 
