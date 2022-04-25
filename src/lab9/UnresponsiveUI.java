@@ -56,10 +56,13 @@ public class UnresponsiveUI extends Application {
 		buttonStart.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				stop = false;
-				while (!stop) {
-					System.out.println("hello!");
-				}
+					Thread thread = new Thread(()->{
+						stop = false;
+						while (!stop) {
+							System.out.println("hello!");
+						}
+					});
+					thread.start();
 			}
 		});
 

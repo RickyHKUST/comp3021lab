@@ -1,7 +1,9 @@
 package lab9;
+import java.util.concurrent.locks.*;
 
 public class RacyCounter {
 
+	private Lock lock = new ReentrantLock();
 	int counter = 0;
 	final static int ITERATIONS = 10000000; /// do not change this
 
@@ -33,8 +35,10 @@ public class RacyCounter {
 		public void run(){
 			for (int i = 0; i < ITERATIONS; i++) {
 				//add synchronization here
-				int temp = counter;
-				counter = temp +1;
+				synchronized(lock){
+					int temp = counter;
+					counter = temp +1;
+				}
 			}
 		}
 	}

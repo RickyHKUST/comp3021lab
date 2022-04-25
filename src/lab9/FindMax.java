@@ -28,31 +28,50 @@ public class FindMax {
 			3, 4543, 234, 3, 454, 1, 2, 3, 1, 34, 5, 6, 5, 63, 5, 34, 2, 78, 2, 3, 4, 5, 234, 678, 543, 45, 67, 43, 2,
 			3, 4543, 234, 3, 454, 1, 2, 3 };
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		new FindMax().printMax();
 	}
 
-	public void printMax() {
+	public void printMax() throws InterruptedException {
 		// this is a single threaded version
-		int max = findMax(0, array.length - 1);
+		LocalMax lm1 = new LocalMax(0,29,array);
+		LocalMax lm2 = new LocalMax(30,59,array);
+		LocalMax lm3 = new LocalMax(60,89,array);
+		Thread findMax1 = new Thread(lm1);
+		Thread findMax2 = new Thread(lm2);
+		Thread findMax3 = new Thread(lm3);
+		findMax1.start();
+		findMax2.start();
+		findMax3.start();
+		findMax1.join();
+		findMax2.join();
+		findMax3.join();
+		int max = Math.max(lm1.max, Math.max(lm2.max,lm3.max));
 		System.out.println("the max value is " + max);
 	}
+	
+	class LocalMax implements Runnable{
+		int[] array;
+		int begin;
+		int end;
+		int max;
+		
+		LocalMax(int begin,int end,int[] array){
+			this.begin=begin;
+			this.end=end;
+			this.array=array;
+		}
 
-	/**
-	 * returns the max value in the array within a give range [begin,range]
-	 * 
-	 * @param begin
-	 * @param end
-	 * @return
-	 */
-	private int findMax(int begin, int end) {
-		// you should NOT change this function
-		int max = array[begin];
-		for (int i = begin + 1; i <= end; i++) {
-			if (array[i] > max) {
-				max = array[i];
+		@Override
+		public void run() {
+			// you should NOT change this function
+			max = array[begin];
+			for (int i = begin + 1; i <= end; i++) {
+				if (array[i] > max) {
+					max = array[i];
+				}
 			}
 		}
-		return max;
 	}
+
 }
