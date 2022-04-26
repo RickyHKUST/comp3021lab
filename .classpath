@@ -5,21 +5,24 @@
 	<classpathentry kind="src" path="lab5"/>
 	<classpathentry kind="src" path="lab6"/>
 	<classpathentry kind="src" path="A2"/>
+	<classpathentry kind="src" path="A3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/13.0.2/d1ac58a077a72518a0e0b254465a104c828249a3/javafx-graphics-13.0.2-win.jar" sourcepath="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/13.0.2/f58b4841344ecaeb7d8cc6b91fc8cf011eecc99d/javafx-graphics-13.0.2-sources.jar">
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx/windows-x64/lib/javafx.graphics.jar" sourcepath="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/13.0.2/f58b4841344ecaeb7d8cc6b91fc8cf011eecc99d/javafx-graphics-13.0.2-sources.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/13.0.2/ecf0e5d615eb4729acfb0151f9bad8f4dcc068f8/javafx-base-13.0.2-win.jar" sourcepath="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/13.0.2/c7dbe774785de58c0c3839c88078b89f493a12fc/javafx-base-13.0.2-sources.jar">
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx/windows-x64/lib/javafx.base.jar" sourcepath="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/13.0.2/c7dbe774785de58c0c3839c88078b89f493a12fc/javafx-base-13.0.2-sources.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/13.0.2/576dbb60fdbc5d358844d2a1f1b214690f2a61bc/javafx-controls-13.0.2-win.jar" sourcepath="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/13.0.2/ea87cbdcde4ce4f0cc64a9ff65c806339beae72e/javafx-controls-13.0.2-sources.jar">
+	<classpathentry kind="lib" path="C:/Program Files/Java/javafx/windows-x64/lib/javafx.controls.jar" sourcepath="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/13.0.2/ea87cbdcde4ce4f0cc64a9ff65c806339beae72e/javafx-controls-13.0.2-sources.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/RickyL/Twitch/Minecraft/Install/runtime/jre-x64/lib/ext/jfxrt.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
