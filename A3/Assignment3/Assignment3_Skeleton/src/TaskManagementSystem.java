@@ -1,9 +1,12 @@
 package Assignment3.Assignment3_Skeleton.src;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.function.Function;
 import java.time.LocalDate;
 import java.time.Month;
@@ -27,7 +30,7 @@ public class TaskManagementSystem {
      * @param t: the task object to be added
      */
     public static void appendNewTask(Task t) {
-
+    	tasks.add(t);
     }
 
     /**
@@ -39,7 +42,9 @@ public class TaskManagementSystem {
      * @return the sorted list of the tags, in which each tag only occurs once
      */
     public static List<String> findAndSortAllUniqueTags() {
-        return null; // You may also change this line
+    	Set<String> tags = new HashSet<>();
+    	tasks.stream().forEach(task -> tags.addAll(task.getTags()));
+        return new ArrayList<String>(tags);
     }
 
     /**
@@ -50,7 +55,7 @@ public class TaskManagementSystem {
      * @return the sorted list of the tasks. The sorting order is the ascending order of the ID.
      */
     public static List<Task> findTasks(Predicate<Task> p) {
-        return null; // You may also change this line
+    	return tasks.stream().filter(p).collect(Collectors.toList());
     }
 
     /**
@@ -61,7 +66,7 @@ public class TaskManagementSystem {
      * @return the number of the tasks satisfying p
      */
     public static int countTasks(Predicate<Task> p) {
-        return 0; // You may also change this line
+    	return (int) tasks.stream().filter(p).count();
     }
 
     /**
@@ -73,7 +78,12 @@ public class TaskManagementSystem {
      * @return the sorted list of the tasks.
      */
     public static List<Task> getTopNTasks(Predicate<Task> p, int N) {
-        return null; // You may also change this line
+    	List<Task> targets = new ArrayList<>();
+    	for(Task t:tasks) {
+    		if(p.test(t)) {targets.add(t);}
+    		if(targets.size()==N) {break;}
+    	}
+        return targets;
     }
 
     /**
@@ -83,46 +93,48 @@ public class TaskManagementSystem {
      * @return: true if at least one task is removed, and otherwise return false.
      */
     public static boolean removeTask(Predicate<Task> p) {
-        return false; // You may also change this line
+        return tasks.removeIf(p);
     }
 
     /* * * * * * * * * * * * * * * *
      * Predicate Definition *
      * * * * * * * * * * * * * * * */
     public static Predicate<Task> byType(TaskType type) {
-        return null; // You may also change this line
+        return t->(t.getType()==type);
     }
 
     public static Predicate<Task> byTag(String tag) {
-        return null; // You may also change this line
+        return t->(t.getTags().contains(tag));
     }
 
     public static Predicate<Task> byTitle(String keyword) {
-        return null; // You may also change this line
+        return t->(t.getTitle().contains(keyword));
     }
 
     public static Predicate<Task> byDescription(String keyword) {
-        return null; // You may also change this line
+        return t->(t.getDescription().contains(keyword));
     }
 
     public static Predicate<Task> byCreationTime(LocalDate d) {
-        return null; // You may also change this line
+        return t->(t.getCreatedOn().isBefore(d));
     }
 
     public static List<Predicate<Task>> genPredicates(Function<String, Predicate<Task>> f, List<String> strs) {
-        return null; // You may also change this line
+        List<Predicate<Task>> predicates = new ArrayList<>();
+        strs.stream().forEach(str -> predicates.add(f.apply(str)));
+    	return predicates;
     }
 
     public static Predicate<Task> andAll(List<Predicate<Task>> ps) {
-        return null; // You may also change this line
+        return t -> ps.stream().allMatch(p -> p.test(t));
     }
 
     public static Predicate<Task> orAll(List<Predicate<Task>> ps) {
-        return null; // You may also change this line
+        return t -> ps.stream().anyMatch(p -> p.test(t));
     }
 
     public static Predicate<Task> not(Predicate<Task> p) {
-        return null; // You may also change this line
+        return p.negate();
     }
 
     public static void main(String[] args) {
