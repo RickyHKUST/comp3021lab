@@ -6,6 +6,7 @@
 	<classpathentry kind="src" path="lab6"/>
 	<classpathentry kind="src" path="A2"/>
 	<classpathentry kind="src" path="A3"/>
+	<classpathentry kind="src" path="A4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/javafx/windows-x64/lib/javafx.graphics.jar" sourcepath="C:/Users/RickyL/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/13.0.2/f58b4841344ecaeb7d8cc6b91fc8cf011eecc99d/javafx-graphics-13.0.2-sources.jar">
 		<attributes>
