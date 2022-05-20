@@ -31,14 +31,12 @@ public class ConcreteBank implements Bank {
 		if(!accountMap.containsKey(accountID)) {return false;}
 		ReentrantLock lock = LockMap.get(accountID);
 		synchronized(lock) {
-			int balance = accountMap.get(accountID);
-			if(balance<amount) {
+			if(accountMap.get(accountID)<amount) {
 				try {lock.wait(timeoutMillis);}
 				catch (InterruptedException e) {e.printStackTrace();}
-				balance = accountMap.get(accountID);
 			}
-			if(balance>=amount) {
-				accountMap.put(accountID, balance-amount);
+			if(accountMap.get(accountID)>=amount) {
+				accountMap.put(accountID, accountMap.get(accountID)-amount);
 				return true;
 			}
 		}
@@ -47,11 +45,7 @@ public class ConcreteBank implements Bank {
 
 	@Override
 	public boolean transfer(String srcAccount, String dstAccount, Integer amount, long timeoutMillis) {
-		if(withdraw(srcAccount,amount,timeoutMillis)) {
-			if(deposit(dstAccount,amount)) {return true;}
-			else {deposit(srcAccount,amount);}
-		}
-		return false;
+		return accountMap.containsKey(dstAccount) && withdraw(srcAccount,amount,timeoutMillis) && deposit(dstAccount,amount);
 	}
 
 	@Override
