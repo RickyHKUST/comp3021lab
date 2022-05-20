@@ -21,10 +21,14 @@ public class ConcreteBank implements Bank {
 	@Override
 	public boolean deposit(String accountID, Integer amount) {
 		// TODO Auto-generated method stub
-		if(!accountMap.containsKey(accountID))
-			return false;
-		accountMap.put(accountID, accountMap.get(accountID)+amount);
-		return true;
+		ReentrantLock lock = LockMap.get(accountID);
+		synchronized(lock) {
+			if(!accountMap.containsKey(accountID))
+				return false;
+			accountMap.put(accountID, accountMap.get(accountID)+amount);
+			lock.notifyAll();
+			return true;
+		}
 	}
 
 	@Override
@@ -79,5 +83,18 @@ public class ConcreteBank implements Bank {
 	public void doLottery(ArrayList<String> accounts, Miner miner) {
 		// TODO Auto-generated method stub
 		
+		ArrayList<Thread> threads = new ArrayList<Thread>();
+		for(String account:accounts) {
+			Thread t = new Thread(()->{deposit(account, miner.mine(account));});
+			threads.add(t);
+			t.start();
+		}
+		for(Thread t:threads) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
