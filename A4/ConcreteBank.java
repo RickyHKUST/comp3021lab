@@ -5,21 +5,21 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ConcreteBank implements Bank {
 // TODO
 	HashMap<String, Integer> accountMap = new HashMap<String, Integer>();
-	HashMap<String, ReentrantLock> LockMap = new HashMap<String, ReentrantLock>();
+	HashMap<String, ReentrantLock> lockMap = new HashMap<String, ReentrantLock>();
 	
 	@Override
 	public boolean addAccount(String accountID, Integer initBalance) {
 		if(accountMap.containsKey(accountID)) {return false;}
 		accountMap.put(accountID, initBalance);
-		LockMap.put(accountID, new ReentrantLock());
+		lockMap.put(accountID, new ReentrantLock());
 		return true;
 	}
 
 	@Override
 	public boolean deposit(String accountID, Integer amount) {
-		ReentrantLock lock = LockMap.get(accountID);
+		if(!accountMap.containsKey(accountID)) {return false;}
+		ReentrantLock lock = lockMap.get(accountID);
 		synchronized(lock) {
-			if(!accountMap.containsKey(accountID)) {return false;}
 			accountMap.put(accountID, accountMap.get(accountID)+amount);
 			lock.notifyAll();
 			return true;
@@ -29,7 +29,7 @@ public class ConcreteBank implements Bank {
 	@Override
 	public boolean withdraw(String accountID, Integer amount, long timeoutMillis) {
 		if(!accountMap.containsKey(accountID)) {return false;}
-		ReentrantLock lock = LockMap.get(accountID);
+		ReentrantLock lock = lockMap.get(accountID);
 		synchronized(lock) {
 			if(accountMap.get(accountID)<amount) {
 				try {lock.wait(timeoutMillis);}
